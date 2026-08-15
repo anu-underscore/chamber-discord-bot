@@ -68,13 +68,13 @@ const generate = {
       const diffDays = Math.floor((today - lastDay) / DAY);
 
       if (diffDays === 0) {
-        // Уже сделал сегодня
+        // Already streak today
         console.log("SKIP");
       } else {
         userData.last_checkin_at = new Date(now);
 
-        // Сделал вчера → продолжаем streak
         if (diffDays === 1) {
+          // Keep streak
           console.log("STREAK");
           ++userData.current_streaks;
 
@@ -82,7 +82,7 @@ const generate = {
             userData.longest_streaks = userData.current_streaks;
           }
         } else {
-          // Пропустил день или больше → сбрасываем
+          // Skip day → reset
           console.log("RESET");
           userData.last_checkin_at = new Date(now);
           userData.current_streaks = 1;
