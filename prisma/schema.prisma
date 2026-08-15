@@ -1,0 +1,15 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+model User {
+  username        String    @unique
+  longest_streaks Int       @default(1)
+  current_streaks Int       @default(1)
+  last_checkin_at DateTime? @default(now())
+}

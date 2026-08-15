@@ -1,0 +1,24 @@
+{
+  "name": "bot_chamber",
+  "version": "1.0.0",
+  "main": "src/main.js",
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "start": "node src/main.js",
+    "dev": "nodemon .",
+    "migrate": "yarn prisma migrate dev && yarn prisma generate",
+    "deploy-commands": "node src/scripts/deploy-commands.js"
+  },
+  "dependencies": {
+    "@prisma/adapter-mariadb": "^7.9.1",
+    "@prisma/client": "^7.9.1",
+    "discord.js": "^14.27.0",
+    "dotenv": "^17.4.2"
+  },
+  "devDependencies": {
+    "@types/node": "^26.2.0",
+    "nodemon": "^3.1.14",
+    "prisma": "^7.9.1"
+  }
+}
