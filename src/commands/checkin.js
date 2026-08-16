@@ -3,9 +3,11 @@ import { MessageFlags, SlashCommandBuilder } from "discord.js";
 
 // services
 import UserService from "../services/User.service.js";
+import LoggerService from "../services/Logger.service.js";
 
 const generate = {
   cooldown: 10,
+
   data: new SlashCommandBuilder()
     .setName("checkin")
     .setDescription("Generate checkin template")
@@ -15,9 +17,12 @@ const generate = {
     .addStringOption((option) =>
       option.setName("today").setDescription("What you want to get done today"),
     ),
+
   async execute(interaction) {
     const yesterday = interaction.options.getString("yesterday");
     const today = interaction.options.getString("today");
+
+    const LOGGER = new LoggerService(interaction.client);
 
     if (!today && !yesterday) {
       return await interaction.editReply({
@@ -84,6 +89,9 @@ const generate = {
         } else {
           // Skip day → reset
           console.log("RESET");
+          await LOGGER.info(
+            `Streak reseted for <@${interaction.user.id}>\n Last checkin at: ${userData.last_checkin_at}`,
+          );
           userData.last_checkin_at = new Date(now);
           userData.current_streaks = 1;
         }

@@ -1,4 +1,8 @@
+// libs
 import { Collection, Events, MessageFlags } from "discord.js";
+
+// services
+import LoggerService from "../services/Logger.service.js";
 
 const interactionCreate = {
   name: Events.InteractionCreate,
@@ -6,12 +10,16 @@ const interactionCreate = {
   async execute(interaction) {
     if (!interaction.isChatInputCommand()) return;
 
+    const LOGGER = new LoggerService(interaction.client);
+
     // check commant matching
     const command = interaction.client.commands.get(interaction.commandName);
     if (!command) {
-      console.error(
-        `No command matching ${interaction.commandName} was found.`,
-      );
+      const errorText = `No command matching ${interaction.commandName} was found.`;
+      console.error(errorText);
+
+      await LOGGER.error(errorText);
+
       return;
     }
 
@@ -52,6 +60,7 @@ const interactionCreate = {
       await command.execute(interaction);
     } catch (error) {
       console.error(error);
+      await LOGGER.error(error);
 
       if (interaction.replied || interaction.deferred) {
         await interaction.followUp({
