@@ -22,8 +22,16 @@ GUILD_ID = Discord server ID (need to enabled developer mode)<br/>
 
 ```
 yarn
+yarn deploy-commands
 yarn dev
 ```
+
+### How to use
+
+After invite bot to Discord server you can use next commands:
+
+- /checkin [yesterday][today]
+- /leaderboard
 
 ## Link
 
