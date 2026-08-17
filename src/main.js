@@ -14,7 +14,13 @@ import { commandsCollection } from "./commands/index.js";
 // events
 import { events } from "./events/index.js";
 
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+const client = new Client({
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent,
+  ],
+});
 
 client.commands = commandsCollection;
 client.cooldowns = new Collection();
