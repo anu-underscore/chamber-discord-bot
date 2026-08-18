@@ -17,6 +17,7 @@ Rename `.env-example` to `.env`
 TOKEN = Discord bot token<br/>
 CLIENT_ID = Discord bot client ID<br/>
 GUILD_ID = Discord server ID (need to enabled developer mode)<br/>
+DEBUG_CHANNEL_ID = Channel in discord where bot send debug messages<br/>
 
 ### Run
 
