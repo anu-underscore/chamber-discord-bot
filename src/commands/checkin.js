@@ -1,5 +1,12 @@
 // libs
-import { MessageFlags, SlashCommandBuilder } from "discord.js";
+import {
+  MessageFlags,
+  SlashCommandBuilder,
+  ModalBuilder,
+  TextInputBuilder,
+  TextInputStyle,
+  ActionRowBuilder,
+} from "discord.js";
 
 // services
 import UserService from "../services/User.service.js";
@@ -10,45 +17,86 @@ const generate = {
 
   data: new SlashCommandBuilder()
     .setName("checkin")
-    .setDescription("Generate checkin template")
-    .addStringOption((option) =>
-      option.setName("yesterday").setDescription("What you did yesterday"),
-    )
-    .addStringOption((option) =>
-      option.setName("today").setDescription("What you want to get done today"),
-    ),
+    .setDescription("Generate checkin template"),
 
   async execute(interaction) {
-    const yesterday = interaction.options.getString("yesterday");
-    const today = interaction.options.getString("today");
+    const modal = new ModalBuilder()
+      .setCustomId("checkin_modal")
+      .setTitle("Daily Check-in ✅");
 
-    const LOGGER = new LoggerService(interaction.client);
+    const yesterdayInput = new TextInputBuilder()
+      .setCustomId("yesterday")
+      .setLabel("What you did yesterday ?")
+      .setStyle(TextInputStyle.Paragraph)
+      .setPlaceholder("Task 1\nTask 2\n etc.")
+      .setRequired(false);
+
+    const todayInput = new TextInputBuilder()
+      .setCustomId("today")
+      .setLabel("What you want to get done today ?")
+      .setStyle(TextInputStyle.Paragraph)
+      .setPlaceholder("Task 1\nTask 2\n etc.")
+      .setRequired(false);
+
+    const pointSymbolInput = new TextInputBuilder()
+      .setCustomId("customPointSymbol")
+      .setLabel("Custom point symbol")
+      .setStyle(TextInputStyle.Short)
+      .setPlaceholder('Default: 📌. Enter "number" for a numbered list.')
+      .setRequired(false);
+
+    modal.addComponents(
+      new ActionRowBuilder().addComponents(yesterdayInput),
+      new ActionRowBuilder().addComponents(todayInput),
+      new ActionRowBuilder().addComponents(pointSymbolInput),
+    );
+
+    await interaction.showModal(modal);
+  },
+
+  async modalSubmit(interaction) {
+    const yesterday = interaction.fields.getTextInputValue("yesterday");
+    const today = interaction.fields.getTextInputValue("today");
+    const customPointSymbol =
+      interaction.fields.getTextInputValue("customPointSymbol") ?? ":pushpin:";
 
     if (!today && !yesterday) {
-      return await interaction.editReply({
+      return await interaction.reply({
         content: "Fill in at least one field",
         flags: MessageFlags.Ephemeral,
       });
     }
 
+    await interaction.deferReply();
+
+    const LOGGER = new LoggerService(interaction.client);
+
     const template = [`**Daily Check-in ✅ <@${interaction.user.id}>**\n`];
 
     // add did check's
     if (yesterday) {
-      const yesterdayArr = yesterday.split(", ");
+      const yesterdayArr = yesterday.split("\n");
       template.push("__What I did yesterday: :ballot_box_with_check:__");
       for (let i = 0; i < yesterdayArr.length; ++i) {
-        template.push(`:pushpin: ${yesterdayArr[i]}`);
+        const line = yesterdayArr[i].trim();
+        if (line === "") continue;
+        template.push(
+          `${customPointSymbol === "number" ? `${i + 1}. ` : customPointSymbol} ${line}`,
+        );
       }
       template.push("");
     }
 
     // add want check's
     if (today) {
-      const todayArr = today.split(", ");
+      const todayArr = today.split("\n");
       template.push("__What I want to get done today: :sparkles:__");
       for (let i = 0; i < todayArr.length; ++i) {
-        template.push(`:pushpin: ${todayArr[i]}`);
+        const line = todayArr[i].trim();
+        if (line === "") continue;
+        template.push(
+          `${customPointSymbol === "number" ? `${i + 1}. ` : customPointSymbol} ${line}`,
+        );
       }
 
       template.push("");

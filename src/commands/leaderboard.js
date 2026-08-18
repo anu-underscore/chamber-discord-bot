@@ -10,6 +10,8 @@ const leaderboard = {
     .setName("leaderboard")
     .setDescription("Show leaderboard"),
   async execute(interaction) {
+    await interaction.deferReply();
+
     const users = await UserService.findMany();
 
     if (users.length === 0) {
