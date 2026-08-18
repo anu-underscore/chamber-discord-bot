@@ -31,7 +31,7 @@ yarn dev
 
 After invite bot to Discord server you can use next commands:
 
-- /checkin [yesterday][today]
+- /checkin
 - /leaderboard
 
 ## Link
