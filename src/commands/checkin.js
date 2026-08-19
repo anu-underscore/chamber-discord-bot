@@ -28,27 +28,17 @@ const generate = {
       .setCustomId("yesterday")
       .setLabel("What you did yesterday ?")
       .setStyle(TextInputStyle.Paragraph)
-      .setPlaceholder("Task 1\nTask 2\n etc.")
       .setRequired(false);
 
     const todayInput = new TextInputBuilder()
       .setCustomId("today")
       .setLabel("What you want to get done today ?")
       .setStyle(TextInputStyle.Paragraph)
-      .setPlaceholder("Task 1\nTask 2\n etc.")
-      .setRequired(false);
-
-    const pointSymbolInput = new TextInputBuilder()
-      .setCustomId("customPointSymbol")
-      .setLabel("Custom point symbol")
-      .setStyle(TextInputStyle.Short)
-      .setPlaceholder('Default: 📌. Enter "number" for a numbered list.')
       .setRequired(false);
 
     modal.addComponents(
       new ActionRowBuilder().addComponents(yesterdayInput),
       new ActionRowBuilder().addComponents(todayInput),
-      new ActionRowBuilder().addComponents(pointSymbolInput),
     );
 
     await interaction.showModal(modal);
@@ -57,8 +47,6 @@ const generate = {
   async modalSubmit(interaction) {
     const yesterday = interaction.fields.getTextInputValue("yesterday");
     const today = interaction.fields.getTextInputValue("today");
-    const customPointSymbol =
-      interaction.fields.getTextInputValue("customPointSymbol") ?? ":pushpin:";
 
     if (!today && !yesterday) {
       return await interaction.reply({
@@ -77,13 +65,7 @@ const generate = {
     if (yesterday) {
       const yesterdayArr = yesterday.split("\n");
       template.push("__What I did yesterday: :ballot_box_with_check:__");
-      for (let i = 0; i < yesterdayArr.length; ++i) {
-        const line = yesterdayArr[i].trim();
-        if (line === "") continue;
-        template.push(
-          `${customPointSymbol === "number" ? `${i + 1}. ` : customPointSymbol} ${line}`,
-        );
-      }
+      template.push(yesterday);
       template.push("");
     }
 
@@ -91,14 +73,7 @@ const generate = {
     if (today) {
       const todayArr = today.split("\n");
       template.push("__What I want to get done today: :sparkles:__");
-      for (let i = 0; i < todayArr.length; ++i) {
-        const line = todayArr[i].trim();
-        if (line === "") continue;
-        template.push(
-          `${customPointSymbol === "number" ? `${i + 1}. ` : customPointSymbol} ${line}`,
-        );
-      }
-
+      template.push(today);
       template.push("");
     }
 
