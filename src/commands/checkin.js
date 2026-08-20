@@ -112,35 +112,40 @@ const generate = {
 
     const { longest_streaks, current_streaks } = userData;
 
-    const checkinEmbed = new EmbedBuilder()  // Embed Part...
-      .setAuthor({ name: `𝗗𝗮𝗶𝗹𝘆 𝗖𝗵𝗲𝗰𝗸 I𝗻...🔁 ${interaction.user.username}`}); // .id Just shows Plan Name. // TODO; add nickname.
-    if (yesterday) { // note; the font for Text used here is mathematical sans-serif bold.
+    const checkinEmbed = new EmbedBuilder()
+      .setTitle(`**Daily Check In** ✅`)
+      .setDescription(`<@${interaction.user.id}>`)
+      .setAuthor({
+        name: interaction.user.globalName,
+        iconURL: interaction.user.displayAvatarURL({
+          dynamic: true,
+          size: 256,
+        }),
+      });
+
+    if (yesterday) {
+      // note; the font for Text used here is mathematical sans-serif bold.
       checkinEmbed.addFields({
-        name:"𝗪𝗵𝗮𝘁 𝗜 𝗗𝗶𝗱 𝗬𝗲𝘀𝘁𝗲𝗿𝗱𝗮𝘆...⏮️",
-        value:yesterday,
+        name: "__What I Did Yesterday__ :ballot_box_with_check:",
+        value: yesterday,
       });
     }
     if (today) {
       checkinEmbed.addFields({
-        name:"𝗪𝗵𝗮𝘁 𝗜 𝗪𝗮𝗻𝘁 𝗧𝗼 𝗗𝗼 𝗧𝗼𝗱𝗮𝘆...🎯",
-        value:today,
+        name: "__What I Want To Get Done Today__ 🎯",
+        value: today,
       });
     }
-    const statsEmbed = new EmbedBuilder().addFields({
-        name:`🔥${current_streaks} Current Streak`,
-        value:"🔥x Away From The Next Check Point (Todo)", // ToDo; adding Stages of streaks. i.e 10 days, 20 days and so on...
-      },
-      {
-        name:`🏆${longest_streaks} Longest Streak`,
-        value:"🏆x Away From Goal (Todo)", // ToDo; adding /setgoal command.
-        inline:true,}
-    );
-
+    const statsEmbed = new EmbedBuilder()
+      .addFields({
+        name: `🔥 Streaks!`,
+        value: `🔥 ${current_streaks}-day${current_streaks > 1 ? "s" : ""} streak \n🏆 ${longest_streaks} day${longest_streaks > 1 ? "s" : ""} longest streak`,
+      })
+      .setColor("#ffd700");
     await interaction.editReply({
-      content:"Congrats On Showing Up Today!!!🏆\nKeep it up and you'll be a CEO of some AI company one day🔥",
-      embeds:[checkinEmbed, statsEmbed]
+      embeds: [checkinEmbed, statsEmbed],
     });
   },
 };
 
-export default generate; // adding better colors and author/fields images to embeds.
+export default generate;
