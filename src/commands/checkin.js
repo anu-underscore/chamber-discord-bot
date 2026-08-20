@@ -71,7 +71,7 @@ const generate = {
         lastCheckin.getDate(),
       );
 
-      const today Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
       const DAY = 24 * 60 * 60 * 1000;
       const diffDays = Math.floor((today - lastDay) / DAY);
